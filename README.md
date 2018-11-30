@@ -3,6 +3,10 @@
 - development use *-ubuntu;
 - production use *-alpine;
 
+## base image
+- ubuntu:16.04
+- alpine:3.8
+
 ## 10.6
 
 ```
