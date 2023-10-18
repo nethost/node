@@ -1,0 +1,11 @@
+services:
+  latest:
+    build:
+      context: .
+      target: latest
+    image: nethost/node:22
+  builder:
+    build:
+      context: .
+      target: builder
+    image: nethost/node:22-builder
