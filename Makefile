@@ -1,7 +1,7 @@
 # Makefile for syncing, signing, and attesting all distroless nodejs nonroot images
 
-# 支持 Node 10~24（注意每个 Node 版本配对不同 debian 版本）
-VERSIONS = 24:debian12 22:debian12 20:debian12 18:debian11 16:debian11 14:debian10 12:debian10 10:debian10
+# 支持 Node 16~24（注意每个 Node 版本配对不同 debian 版本）
+VERSIONS = 24:debian12 22:debian12 20:debian12 18:debian11 16:debian11
 
 SRC_PREFIX = gcr.io/distroless/nodejs
 SRC_TAG = nonroot
