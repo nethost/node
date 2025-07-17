@@ -4,7 +4,7 @@
 VERSIONS = 24:debian12 22:debian12 20:debian12 18:debian11 16:debian11
 
 SRC_PREFIX = gcr.io/distroless/nodejs
-SRC_TAG = nonroot
+SRC_TAG = latest
 
 DST_REGISTRIES = \
     registry.cn-shanghai.aliyuncs.com/nethost/node \
