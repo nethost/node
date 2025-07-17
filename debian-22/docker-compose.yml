@@ -1,6 +1,0 @@
-services:
-  latest:
-    build:
-      context: .
-      target: latest
-    image: nethost/node:22-debian

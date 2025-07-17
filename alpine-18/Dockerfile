@@ -1,11 +1,9 @@
-### latest ###
-
-FROM alpine:3.22 AS latest
+FROM alpine:3.22 AS builder
 LABEL maintainer="hi@billgo.me"
 
 RUN apk add -U bash nano tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && apk del tzdata
 
-ENV NODE_VERSION=24.3.0
+ENV NODE_VERSION=24.4.1
 
 RUN addgroup -g 1000 node \
   && adduser -u 1000 -G node -s /bin/sh -D node \
@@ -15,7 +13,7 @@ RUN addgroup -g 1000 node \
   curl \
   && ARCH= OPENSSL_ARCH='linux*' && alpineArch="$(apk --print-arch)" \
   && case "${alpineArch##*-}" in \
-  x86_64) ARCH='x64' CHECKSUM="6426c55f7b2817320d952dd7ea4a2a39ed90157c21eb63a5ff144b6bb9d018ad" OPENSSL_ARCH=linux-x86_64;; \
+  x86_64) ARCH='x64' CHECKSUM="529475bf6cd07c33c5a030e7065dfb8dd22ffdfa988f872faa37ca9cb51242f8" OPENSSL_ARCH=linux-x86_64;; \
   x86) OPENSSL_ARCH=linux-elf;; \
   aarch64) OPENSSL_ARCH=linux-aarch64;; \
   arm*) OPENSSL_ARCH=linux-armv4;; \
@@ -55,8 +53,8 @@ RUN addgroup -g 1000 node \
   108F52B48DB57BB0CC439B2997B01419BD92F80A \
   A363A499291CBBC940DD62E41F10027AF002F8B0 \
   ; do \
-  gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
+  { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
+  { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
   done \
   && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz" \
   && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -79,20 +77,9 @@ RUN addgroup -g 1000 node \
   && find /usr/local/include/node/openssl/archs -mindepth 1 -maxdepth 1 ! -name "$OPENSSL_ARCH" -exec rm -rf {} \; \
   && apk del .build-deps \
   # smoke tests
-  && npm install pm2@6.0.8 -g \
   && node --version \
   && npm --version \
   && rm -rf /tmp/*
-
-COPY docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD [ "node" ]
-
-### builder ###
-
-FROM latest AS builder
-LABEL maintainer="hi@billgo.me"
 
 ENV YARN_VERSION=1.22.22
 
@@ -102,8 +89,8 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && for key in \
   6A010C5166006599AA17F08146C2130DFD2497F5 \
   ; do \
-  gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
+  { gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" && gpg --batch --fingerprint "$key"; } || \
+  { gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" && gpg --batch --fingerprint "$key"; } ; \
   done \
   && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
   && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
