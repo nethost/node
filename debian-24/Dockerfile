@@ -105,8 +105,6 @@ RUN set -ex \
 
 ENV MONGO_TOOLS_VERSION=100.12.2
 
-ENV MONGO_TOOLS_VERSION=100.12.2
-
 RUN set -ex \
   && apt-get update \
   && apt-get install -y --no-install-recommends zip ca-certificates curl make jq git gcc g++ \
