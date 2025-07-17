@@ -1,13 +1,6 @@
 FROM debian:bookworm-slim AS builder
 LABEL maintainer="hi@billgo.me"
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends bash nano tzdata \
-  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-  && echo "Asia/Shanghai" > /etc/timezone \
-  && apt-get remove --purge -y tzdata \
-  && rm -rf /var/lib/apt/lists/*
-
 ENV NODE_VERSION=24.4.1
 
 RUN ARCH= OPENSSL_ARCH= && dpkgArch="$(dpkg --print-architecture)" \
@@ -124,7 +117,6 @@ RUN set -ex \
   && tar -xzf /tmp/$TOOLS_PKG -C /tmp \
   && cp /tmp/mongodb-database-tools-*/bin/* /usr/local/bin/ \
   && rm -rf /tmp/mongodb-database-tools-* /tmp/$TOOLS_PKG
-
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
