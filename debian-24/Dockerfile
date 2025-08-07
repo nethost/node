@@ -118,6 +118,11 @@ RUN set -ex \
   && cp /tmp/mongodb-database-tools-*/bin/* /usr/local/bin/ \
   && rm -rf /tmp/mongodb-database-tools-* /tmp/$TOOLS_PKG
 
+RUN apt-get update && apt-get install -y tzdata --no-install-recommends \
+  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+  && echo "Asia/Shanghai" > /etc/timezone \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
